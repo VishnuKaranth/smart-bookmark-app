@@ -112,6 +112,15 @@ App will be available at: **[http://localhost:3000](http://localhost:3000)**
 
 ---
 
+## ⚠️ Challenges Faced
+
+* Integrating Supabase for the first time required understanding its authentication flow, database access patterns, and Realtime subscriptions.
+* Implementing reliable real-time updates across tabs while maintaining optimistic UI state needed careful debugging and testing.
+* Configuring Row Level Security (RLS) policies correctly to ensure strict per-user data isolation without breaking queries was a key challenge.
+* Structuring the application using Next.js App Router with a clear separation of Server and Client Components while preserving performance and clean architecture.
+
+---
+
 ## 🚀 Deployment
 
 This project is fully optimized for deployment on **Vercel**.
@@ -121,15 +130,6 @@ npm run build
 ```
 
 Deploy via the Vercel dashboard or CLI.
-
----
-
-## 📌 Roadmap
-
-* 🔍 Bookmark search & filtering
-* 📁 Folder-based organization
-* 📱 Progressive Web App (PWA) support
-* 🤖 AI-powered bookmark suggestions
 
 ---
 
