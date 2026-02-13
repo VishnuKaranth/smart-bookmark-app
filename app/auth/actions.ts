@@ -10,6 +10,7 @@ export async function loginWithGoogle() {
         let url =
             process.env.NEXT_PUBLIC_BASE_URL ?? // Set this to your site URL in production env.
             process.env.NEXT_PUBLIC_VERCEL_URL ?? // Automatically set by Vercel.
+            process.env.VERCEL_URL ?? // Server-side Vercel URL
             'http://localhost:3000/'
         // Make sure to include `https://` when not localhost.
         url = url.includes('http') ? url : `https://${url}`
@@ -18,18 +19,23 @@ export async function loginWithGoogle() {
         return url
     }
 
+    const redirectUrl = `${getURL()}auth/callback`
+    console.log('Attempting login with redirect URL:', redirectUrl)
+
     const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-            redirectTo: `${getURL()}auth/callback`,
+            redirectTo: redirectUrl,
         },
     })
 
     if (error) {
+        console.error('Login error:', error)
         redirect('/error')
     }
 
     if (data.url) {
+        console.log('Redirecting to Google:', data.url)
         redirect(data.url)
     }
 }
