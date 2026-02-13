@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Smart Bookmark Manager
+
+A clean, performant bookmark manager built with **Next.js 15 (App Router)** and **Supabase**.
+
+This project focuses on providing a fast, distraction-free interface for managing links. It implements full-stack best practices including server-side auth, row-level security, and optimistic UI updates.
+
+## Key Features
+
+*   **Authentication**: Google OAuth integration via Supabase Auth with secure session handling.
+*   **Database Security**: Strict Row Level Security (RLS) policies ensure users can only access their own data.
+*   **Real-time Sync**: Bookmarks update instantly across devices using Supabase Realtime subscriptions.
+*   **Theming**: 6 distinct themes including high-contrast and dark modes, built with Tailwind CSS variables.
+*   **Performance**:
+    *   Server Components for initial data load.
+    *   Optimistic updates for immediate UI feedback.
+    *   Dynamic Open Graph images for social sharing.
+
+## Tech Stack
+
+*   **Frontend**: Next.js 15, TypeScript, Tailwind CSS v4, Framer Motion
+*   **Backend**: Supabase (PostgreSQL, Auth, Realtime)
+*   **State**: React Server Actions & Hooks
+*   **Deployment**: Vercel ready
 
 ## Getting Started
 
-First, run the development server:
+1.  **Clone & Install**
+    ```bash
+    git clone https://github.com/your-username/smart-bookmark-app.git
+    cd smart-bookmark-app
+    npm install
+    ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+2.  **Environment Variables**
+    Create a `.env.local` file:
+    ```env
+    NEXT_PUBLIC_SUPABASE_URL=your_project_url
+    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+    ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+3.  **Database Guidelines**
+    The app requires a `bookmarks` table with RLS enabled.
+    
+    ```sql
+    create table bookmarks (
+      id uuid default gen_random_uuid() primary key,
+      created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+      title text not null,
+      url text not null,
+      user_id uuid references auth.users not null default auth.uid()
+    );
+    
+    alter table bookmarks enable row level security;
+    
+    create policy "Users can view own items" on bookmarks for select using (auth.uid() = user_id);
+    create policy "Users can insert own items" on bookmarks for insert with check (auth.uid() = user_id);
+    create policy "Users can delete own items" on bookmarks for delete using (auth.uid() = user_id);
+    ```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+4.  **Run Development Server**
+    ```bash
+    npm run dev
+    ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## License
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
